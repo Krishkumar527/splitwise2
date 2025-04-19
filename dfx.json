@@ -1,0 +1,38 @@
+{
+  "canisters": {
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    },
+    "splitwise2_backend": {
+      "candid": "src/splitwise2_backend/splitwise2_backend.did",
+      "package": "splitwise2_backend",
+      "type": "rust"
+    },
+    "splitwise2_frontend": {
+      "dependencies": [
+        "splitwise2_backend"
+      ],
+      "source": [
+        "src/splitwise2_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "splitwise2_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
