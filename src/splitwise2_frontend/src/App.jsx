@@ -1,30 +1,74 @@
-import { useState } from 'react';
-import { splitwise2_backend } from 'declarations/splitwise2_backend';
+import React, { useState } from "react";
+import { Actor, HttpAgent } from "@dfinity/agent";
+
+const agent = new HttpAgent();
+const backend = Actor.createActor(idlFactory, {
+  agent,
+  canisterId: "your-backend-canister-id", // Replace with your actual backend canister ID
+});
 
 function App() {
-  const [greeting, setGreeting] = useState('');
+  const [payer, setPayer] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [participants, setParticipants] = useState("");
+  const [balances, setBalances] = useState([]);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    splitwise2_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  const handleAddExpense = async () => {
+    const participantsArray = participants.split(",").map((p) => p.trim());
+    try {
+      await backend.add_expense(payer, parseInt(amount), participantsArray);
+      alert("Expense added successfully!");
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      alert("Failed to add expense.");
+    }
+  };
+
+  const handleGetBalances = async () => {
+    try {
+      const result = await backend.get_all_user_balances();
+      setBalances(result);
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+      alert("Failed to fetch balances.");
+    }
+  };
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div>
+      <h1>Splitwise DApp</h1>
+      <div>
+        <input
+          type="text"
+          placeholder="Payer Principal"
+          value={payer}
+          onChange={(e) => setPayer(e.target.value)}
+        />
+        <input
+          type="number"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Participants (comma-separated Principals)"
+          value={participants}
+          onChange={(e) => setParticipants(e.target.value)}
+        />
+        <button onClick={handleAddExpense}>Add Expense</button>
+      </div>
+      <div>
+        <button onClick={handleGetBalances}>Get All Balances</button>
+        <ul>
+          {balances.map(([principal, balance], index) => (
+            <li key={index}>
+              {principal}: {balance}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 

@@ -1,3 +1,8 @@
 service : {
-    "greet": (text) -> (text) query;
+  add_expense : (principal, int64, vec principal) -> ();
+  get_all_user_balances : () -> (vec record { principal; int64 }) query;
+  get_net_balance_with_user : (principal) -> (int64) query;
+  get_total_net_balance : () -> (int64) query;
+  settle_balance_with_user : (principal) -> ();
+  split_expense : (principal, int64, vec principal) -> ();
 }
